@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "DiscGolf Score Manager",
+    "slug": "discgolf-score-manager",
+    "owner": "ediblemeerkat",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.discgolf.scoremanager"
+    },
+    "android": {
+      "package": "com.discgolf.scoremanager",
+      "versionCode": 1,
+      "permissions": []
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#2A9D8F" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="DG Score">
+  
+  <title>ディスクゴルフ スコアマネージャー</title>
+  <meta name="description" content="電波の悪い環境でも使えるディスクゴルフスコア記録アプリ" />
+  
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background-color: #f5f5f5;
+      touch-action: manipulation;
+      overscroll-behavior-y: none;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    #root {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* iOS Safe Area対応 */
+    @supports (padding: max(0px)) {
+      body {
+        padding-top: constant(safe-area-inset-top);
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: constant(safe-area-inset-bottom);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+    }
+    
+    /* PWAインストールプロンプト */
+    .install-prompt {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2A9D8F;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 9999;
+      display: none;
+      font-size: 14px;
+      cursor: pointer;
+      animation: slideUp 0.3s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from {
+        transform: translateX(-50%) translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <noscript>JavaScriptを有効にしてください</noscript>
+  <div id="root"></div>
+  
+  <div id="install-prompt" class="install-prompt">
+    📱 ホーム画面に追加してオフラインで使用
+  </div>
+  
+  <script>
+    // Service Worker登録
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful:', registration);
+          })
+          .catch(err => {
+            console.log('ServiceWorker registration failed:', err);
+          });
+      });
+    }
+    
+    // PWAインストールプロンプト
+    let deferredPrompt;
+    const installPrompt = document.getElementById('install-prompt');
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installPrompt.style.display = 'block';
+    });
+    
+    installPrompt.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to install prompt: ${outcome}`);
+        deferredPrompt = null;
+        installPrompt.style.display = 'none';
+      }
+    });
+    
+    // iOS向けインストール案内
+    if (navigator.standalone === false && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+      setTimeout(() => {
+        if (!window.navigator.standalone) {
+          installPrompt.innerHTML = '📱 Safari共有ボタン→「ホーム画面に追加」';
+          installPrompt.style.display = 'block';
+        }
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

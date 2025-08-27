@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Icon Generator</title>
+</head>
+<body>
+  <canvas id="canvas192" width="192" height="192"></canvas>
+  <canvas id="canvas512" width="512" height="512"></canvas>
+  <script>
+    function drawIcon(canvasId, size) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      
+      // 背景
+      ctx.fillStyle = '#2A9D8F';
+      ctx.fillRect(0, 0, size, size);
+      
+      // ディスクのアイコンを描画
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = size * 0.04;
+      ctx.fillStyle = '#ffffff';
+      
+      // 円（ディスク）
+      ctx.beginPath();
+      ctx.arc(size/2, size/2, size * 0.35, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      // 中心の点
+      ctx.beginPath();
+      ctx.arc(size/2, size/2, size * 0.05, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // フェアウェイライン
+      ctx.beginPath();
+      ctx.moveTo(size * 0.2, size * 0.5);
+      ctx.quadraticCurveTo(size * 0.5, size * 0.3, size * 0.8, size * 0.5);
+      ctx.stroke();
+      
+      // テキスト
+      ctx.font = `bold ${size * 0.08}px sans-serif`;
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.fillText('DG', size/2, size * 0.85);
+      
+      // 画像として保存
+      canvas.toBlob(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `icon-${size}.png`;
+        document.body.appendChild(a);
+        a.click();
+      });
+    }
+    
+    drawIcon('canvas192', 192);
+    drawIcon('canvas512', 512);
+  </script>
+</body>
+</html>
